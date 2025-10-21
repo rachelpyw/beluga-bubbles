@@ -42,7 +42,7 @@ Bad example: [long paragraph explaining everything]`;
 				agent: {
 					prompt: {
 						prompt: agentSystemPrompt,
-						llm: 'claude-sonnet-4@20250514',
+						llm: 'gpt-4o',
 						temperature: 1
 					},
 					firstMessage: `Hello! I'm Bubbles the Beluga Whale. Welcome to my home, the deep blue Arctic Ocean. How do you feel about the climate these days?`

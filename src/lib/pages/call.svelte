@@ -222,15 +222,34 @@
 		}
 
 		try {
+			console.log('Starting conversation with agent:', agentId);
+			
 			conversation = await Conversation.startSession({
 				agentId: agentId,
 				connectionType: 'webrtc',
-				onMessage: (message) => console.log(message)
+				onConnect: () => {
+					console.log('Conversation connected!');
+				},
+				onDisconnect: () => {
+					console.log('Conversation disconnected');
+				},
+				onMessage: (message) => {
+					console.log('Message received:', message);
+				},
+				onError: (error) => {
+					console.error('Conversation error:', error);
+				}
 			});
 
+			console.log('Conversation object:', conversation);
 			extractAudioAnalyser();
 		} catch (error) {
 			console.error('Failed to initialize conversation:', error);
+			if (error.name === 'NotAllowedError') {
+				alert('Microphone access is required to talk with Bubbles. Please allow microphone access and refresh the page.');
+			} else {
+				alert('Failed to connect to Bubbles. Please refresh and try again.');
+			}
 		}
 	}
 
@@ -281,7 +300,7 @@
 	<div class="w-xl rounded-xl bg-white p-4">
 		<div class="">
 			<!-- Video Container with 3:4 aspect ratio -->
-			<div class="relative aspect-[3/4] w-full overflow-hidden rounded-md">
+			<div class="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-gradient-to-b from-blue-400 to-blue-600">
 				<!-- Speaking Video (base layer) -->
 				{#if speakingVideo}
 					<video
@@ -292,6 +311,11 @@
 						playsinline
 						class="absolute inset-0 h-full w-full object-cover"
 					></video>
+				{:else if avatar}
+					<!-- Show static avatar image if no video -->
+					<div class="absolute inset-0 flex items-center justify-center">
+						<HexagonAvatar src={avatar} alt="Bubbles" size="xxl" />
+					</div>
 				{:else}
 					<div class="absolute inset-0 bg-gray-300"></div>
 				{/if}
